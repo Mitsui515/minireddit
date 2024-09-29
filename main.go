@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"minireddit/dao/mysql"
 	"minireddit/dao/redis"
@@ -19,8 +20,16 @@ import (
 )
 
 func main() {
+	// 0. 加载配置文件
+	// if len(os.Args) < 2 {
+	// 	fmt.Println("need a config file, eg: ./minireddit config.yaml")
+	// 	return
+	// }
+	configFile := flag.String("config", "./conf/config.yaml", "config file path")
+	flag.Parse()
+
 	// 1. 加载配置
-	if err := settings.Init(); err != nil {
+	if err := settings.Init(*configFile); err != nil {
 		fmt.Printf("init settings failed, err:%v\n", err)
 		return
 	}

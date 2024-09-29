@@ -2,6 +2,7 @@ app:
   name: "minireddit"
   mode: "dev"
   port: 8081
+  version: "v0.0.1"
 
 log:
   level: "debug"
