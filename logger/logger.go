@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"minireddit/settings"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -19,12 +20,12 @@ import (
 var lg *zap.Logger
 
 // Init 初始化lg
-func Init() (err error) {
+func Init(cfg *settings.LogConfig) (err error) {
 	writeSyncer := getLogWriter(
-		viper.GetString("log.filename"),
-		viper.GetInt("log.max_size"),
-		viper.GetInt("log.max_backups"),
-		viper.GetInt("log.max_age"),
+		cfg.Filename,
+		cfg.MaxSize,
+		cfg.MaxBackups,
+		cfg.MaxAge,
 	)
 	encoder := getEncoder()
 	var l = new(zapcore.Level)
