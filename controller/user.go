@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
@@ -27,7 +27,7 @@ func SignUpHandler(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": removeToStruct(errs.Translate(trans)), // 翻译错误
+			"msg": removeTopStruct(errs.Translate(trans)), // 翻译错误
 		})
 		return
 	}
