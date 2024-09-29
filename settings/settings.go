@@ -12,10 +12,12 @@ var Conf = new(AppConfig)
 
 // AppConfig 程序配置结构体
 type AppConfig struct {
-	Name    string `mapstructure:"name"`
-	Mode    string `mapstructure:"mode"`
-	Version string `mapstructure:"version"`
-	Port    int    `mapstructure:"port"`
+	Name      string `mapstructure:"name"`
+	Mode      string `mapstructure:"mode"`
+	Version   string `mapstructure:"version"`
+	StartTime string `mapstructure:"start_time"`
+	MachineID int64  `mapstructure:"machine_id"`
+	Port      int    `mapstructure:"port"`
 
 	*LogConfig   `mapstructure:"log"`
 	*MySQLConfig `mapstructure:"mysql"`
@@ -51,9 +53,9 @@ type RedisConfig struct {
 	PoolSize int    `mapstructure:"pool_size"`
 }
 
-func Init(filePath string) (err error) {
+func Init() (err error) {
 	// 方式1：直接指定配置文件路径(相对路径或绝对路径)
-	// viper.SetConfigFile("./conf/config.yaml")
+	viper.SetConfigFile("./conf/config.yaml")
 
 	// 方式2：指定配置文件名和配置文件路径
 	// 配置文件名不要带后缀
@@ -65,7 +67,7 @@ func Init(filePath string) (err error) {
 	// 配合远程配置中心使用，告诉viper当前配置文件的类型
 	// viper.SetConfigType("yaml")
 
-	viper.SetConfigFile(filePath)
+	// viper.SetConfigFile(filePath)
 
 	err = viper.ReadInConfig()
 	if err != nil {

@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
+	"minireddit/controller"
 	"minireddit/dao/mysql"
 	"minireddit/dao/redis"
 	"minireddit/logger"
-	"minireddit/routes"
+	"minireddit/pkg/snowflake"
+	route "minireddit/routes"
 	"minireddit/settings"
 	"net/http"
 	"os"
@@ -20,43 +21,53 @@ import (
 )
 
 func main() {
-	// 0. 加载配置文件
+	// 加载配置文件
 	// if len(os.Args) < 2 {
 	// 	fmt.Println("need a config file, eg: ./minireddit config.yaml")
 	// 	return
 	// }
-	configFile := flag.String("config", "./conf/config.yaml", "config file path")
-	flag.Parse()
+	// configFile := flag.String("config", "./conf/config.yaml", "config file path")
+	// flag.Parse()
 
-	// 1. 加载配置
-	if err := settings.Init(*configFile); err != nil {
+	// 加载配置
+	if err := settings.Init(); err != nil {
 		fmt.Printf("init settings failed, err:%v\n", err)
 		return
 	}
-	// 2. 初始化日志
+	// 初始化日志
 	if err := logger.Init(settings.Conf.LogConfig); err != nil {
 		fmt.Printf("init logger failed, err:%v\n", err)
 		return
 	}
 	defer zap.L().Sync()
 	zap.L().Debug("logger init success...")
-	// 3. 初始化MySQL
+	// 初始化MySQL
 	if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 		return
 	}
 	defer mysql.Close()
-	// 4. 初始化Redis
+	// 初始化Redis
 	if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 		fmt.Printf("init redis failed, err:%v\n", err)
 		return
 	}
 	defer redis.Close()
-	// 5. 注册路由
-	r := routes.SetUp()
-	// 6. 启动服务(优雅关机)
+
+	if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
+		fmt.Printf("init snowflake failed, err:%v\n", err)
+		return
+	}
+	// 初始化gin框架内置的校验器使用的翻译器
+	if err := controller.InitTrans("zh"); err != nil {
+		fmt.Printf("init validator trans failed, err:%v\n", err)
+		return
+	}
+	// 注册路由
+	r := route.SetUpRouter()
+	// 启动服务(优雅关机)
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", viper.GetInt("app.port")),
+		Addr:    fmt.Sprintf(":%d", viper.GetInt("port")),
 		Handler: r,
 	}
 
