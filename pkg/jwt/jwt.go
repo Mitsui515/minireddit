@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/spf13/viper"
 )
 
 // 定义Token过期时间
@@ -31,8 +32,8 @@ func GenToken(userID int64, username string) (aToken, rToken string, err error) 
 		userID,
 		username,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(AccessTokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "minireddit",                                     // 签发人
+			ExpiresAt: time.Now().Add(viper.GetDuration("auth.jwt_atoken_expire") * time.Hour).Unix(), // 过期时间
+			Issuer:    "minireddit",                                                                   // 签发人
 		},
 	}
 	// 加密并获得完整的编码后的字符串token
@@ -40,8 +41,8 @@ func GenToken(userID int64, username string) (aToken, rToken string, err error) 
 
 	// refresh token 不需要存任何自定义信息，所以不需要自定义的 MyClaims
 	rToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(RefreshTokenExpireDuration).Unix(), // 过期时间
-		Issuer:    "minireddit",                                      // 签发人
+		ExpiresAt: time.Now().Add(viper.GetDuration("auth.jwt_rtoken_expire") * time.Hour).Unix(), // 过期时间
+		Issuer:    "minireddit",                                                                   // 签发人
 	}).SignedString(mySecret)
 	return
 }

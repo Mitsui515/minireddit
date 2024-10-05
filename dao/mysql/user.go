@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
-	"errors"
 	"minireddit/models"
 )
 
@@ -12,12 +11,6 @@ import (
 // 待logic层调用
 
 const secret = "mitsui515"
-
-var (
-	ErrorUserExist       = errors.New("用户已存在")
-	ErrorUserNotExist    = errors.New("用户不存在")
-	ErrorInvalidPassword = errors.New("密码错误")
-)
 
 // CheckUserExist 查询指定用户名的用户是否存在
 func CheckUserExist(username string) (err error) {

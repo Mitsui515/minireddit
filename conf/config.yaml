@@ -5,6 +5,10 @@ version: "v0.0.1"
 start_time: "2024-01-01"
 machine_id: 1
 
+auth:
+  jwt_atoken_expire: 24
+  jwt_rtoken_expire: 720
+
 log:
   level: "debug"
   filename: "minireddit.log"
