@@ -3,6 +3,7 @@ package route
 import (
 	"minireddit/controller"
 	"minireddit/logger"
+	"minireddit/middlewares"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,14 +16,16 @@ func SetUpRouter(mode string) *gin.Engine {
 	r := gin.New()
 	r.Use(logger.GinLogger(), logger.GinRecovery(true))
 
-	// 注册业务路由
-	r.POST("/signup", controller.SignUpHandler)
+	r.POST("/signup", controller.SignUpHandler)              // 注册
+	r.POST("/login", controller.LoginHandler)                // 登录
+	r.POST("/refresh_token", controller.RefreshTokenHandler) // 刷新token
 
-	r.GET("/ping", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "pong")
+	r.GET("/ping", middlewares.JWTAuthMiddleware(), func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
 	})
-	r.NoRoute(func(ctx *gin.Context) {
-		ctx.JSON(http.StatusNotFound, gin.H{
+
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
 			"msg": "404 not found",
 		})
 	})
