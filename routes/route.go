@@ -21,7 +21,9 @@ func SetUpRouter(mode string) *gin.Engine {
 	r.POST("/refresh_token", controller.RefreshTokenHandler) // 刷新token
 
 	r.GET("/ping", middlewares.JWTAuthMiddleware(), func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "pong",
+		})
 	})
 
 	r.NoRoute(func(c *gin.Context) {
