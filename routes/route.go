@@ -26,6 +26,10 @@ func SetUpRouter(mode string) *gin.Engine {
 		v1.GET("/community", controller.CommunityHandler)           // 获取社区列表
 		v1.GET("/community/:id", controller.CommunityDetailHandler) // 获取社区详情
 
+		v1.POST("/post", controller.CreatePostHandler)       // 创建帖子
+		v1.GET("/post/:id", controller.GetPostDetailHandler) // 获取帖子详情
+		v1.GET("/posts/", controller.GetPostListHandler)     // 获取帖子列表
+
 		v1.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		})
