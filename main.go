@@ -8,7 +8,7 @@ import (
 	"minireddit/dao/redis"
 	"minireddit/logger"
 	"minireddit/pkg/snowflake"
-	route "minireddit/routes"
+	route "minireddit/router"
 	"minireddit/settings"
 	"net/http"
 	"os"

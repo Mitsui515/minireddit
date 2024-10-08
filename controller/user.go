@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"minireddit/dao/mysql"
 	"minireddit/logic"
 	"minireddit/models"
@@ -61,7 +62,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 	// 2. 业务处理
-	aToken, rToken, err := logic.Login(p)
+	user, err := logic.Login(p)
 	if err != nil {
 		zap.L().Error("logic.Login failed", zap.String("username", p.Username), zap.Error(err))
 		if errors.Is(err, mysql.ErrorUserNotExist) {
@@ -73,8 +74,10 @@ func LoginHandler(c *gin.Context) {
 	}
 	// 3. 返回响应
 	ResponseSuccess(c, gin.H{
-		"access_token":  aToken,
-		"refresh_token": rToken,
+		"user_id":       fmt.Sprintf("%d", user.UserID), // id值大于1<<53-1,前端js会有精度丢失问题
+		"user_name":     user.Username,
+		"access_token":  user.AccessToken,
+		"refresh_token": user.RefreshToken,
 	})
 }
 

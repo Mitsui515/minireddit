@@ -30,6 +30,8 @@ func SetUpRouter(mode string) *gin.Engine {
 		v1.GET("/post/:id", controller.GetPostDetailHandler) // 获取帖子详情
 		v1.GET("/posts/", controller.GetPostListHandler)     // 获取帖子列表
 
+		v1.POST("/vote", controller.PostVoteHandler) // 投票
+
 		v1.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		})
