@@ -28,7 +28,8 @@ func SetUpRouter(mode string) *gin.Engine {
 
 		v1.POST("/post", controller.CreatePostHandler)       // 创建帖子
 		v1.GET("/post/:id", controller.GetPostDetailHandler) // 获取帖子详情
-		v1.GET("/posts/", controller.GetPostListHandler)     // 获取帖子列表
+		v1.GET("/posts", controller.GetPostListHandler)      // 获取帖子列表
+		v1.GET("/posts2", controller.GetPostListHandler2)    // 根据时间或分数获取帖子列表
 
 		v1.POST("/vote", controller.PostVoteHandler) // 投票
 
