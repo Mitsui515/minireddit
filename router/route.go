@@ -2,11 +2,14 @@ package route
 
 import (
 	"minireddit/controller"
+	_ "minireddit/docs"
 	"minireddit/logger"
 	"minireddit/middlewares"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	gs "github.com/swaggo/gin-swagger"
 )
 
 func SetUpRouter(mode string) *gin.Engine {
@@ -15,6 +18,8 @@ func SetUpRouter(mode string) *gin.Engine {
 	}
 	r := gin.New()
 	r.Use(logger.GinLogger(), logger.GinRecovery(true))
+
+	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler)) // 添加swagger路由
 
 	v1 := r.Group("/api/v1")
 	v1.POST("/signup", controller.SignUpHandler)              // 注册

@@ -1,0 +1,238 @@
+basePath: /api/v1
+definitions:
+  controller._ResponsePostList:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/controller.ResCode'
+        description: 业务响应状态码
+      data:
+        description: 数据
+        items:
+          $ref: '#/definitions/models.ApiPostDetail'
+        type: array
+      message:
+        description: 提示信息
+        type: string
+    type: object
+  controller.ResCode:
+    enum:
+    - 1000
+    - 1001
+    - 1002
+    - 1003
+    - 1004
+    - 1005
+    - 1006
+    - 1007
+    type: integer
+    x-enum-varnames:
+    - CodeSuccess
+    - CodeInvalidParam
+    - CodeUserExist
+    - CodeUserNotExist
+    - CodeInvalidPassword
+    - CodeServerBusy
+    - CodeNeedLogin
+    - CodeInvalidToken
+  models.ApiPostDetail:
+    properties:
+      author_id:
+        type: integer
+      author_name:
+        type: string
+      community:
+        allOf:
+        - $ref: '#/definitions/models.CommunityDetail'
+        description: 嵌入社区结构体
+      community_id:
+        type: integer
+      content:
+        type: string
+      create_time:
+        type: string
+      id:
+        example: "0"
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      update_time:
+        type: string
+      vote_num:
+        type: integer
+    required:
+    - community_id
+    - content
+    - title
+    type: object
+  models.CommunityDetail:
+    properties:
+      community_id:
+        type: integer
+      community_name:
+        type: string
+      create_time:
+        type: string
+      introduction:
+        type: string
+    type: object
+  models.Post:
+    properties:
+      author_id:
+        type: integer
+      community_id:
+        type: integer
+      content:
+        type: string
+      create_time:
+        type: string
+      id:
+        example: "0"
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      update_time:
+        type: string
+    required:
+    - community_id
+    - content
+    - title
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact: {}
+  description: minireddit API
+  title: minireddit API
+  version: 0.0.1
+paths:
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: 获取分页的帖子列表
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 帖子列表
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      summary: 获取帖子列表
+      tags:
+      - 帖子
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的帖子
+      parameters:
+      - description: 帖子内容
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      summary: 创建帖子
+      tags:
+      - 帖子
+  /posts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据帖子ID获取帖子详情
+      parameters:
+      - description: 帖子ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功获取帖子详情
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "500":
+          description: 服务器内部错误"ResponsePostList
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      summary: 获取帖子详情
+      tags:
+      - 帖子相关接口
+  /posts2:
+    get:
+      consumes:
+      - application/json
+      description: 可按社区按时间或分数排序查询帖子列表接口
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - in: query
+        name: community_id
+        type: integer
+      - enum:
+        - time
+        - score
+        example: time
+        in: query
+        name: order
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 升级版帖子列表接口
+      tags:
+      - 帖子相关接口
+swagger: "2.0"

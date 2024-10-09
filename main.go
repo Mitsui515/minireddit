@@ -20,6 +20,11 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title minireddit API
+// @version 0.0.1
+// @description minireddit API
+// @BasePath /api/v1
+// @host 127.0.0.1:8080
 func main() {
 	// 加载配置文件
 	// if len(os.Args) < 2 {
